@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uplaod File Using Js && PHP</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container">
+        <h2 class="text-center mt-4 mb-4">Uplaod File on Server Using Fetch Api with Php</h2>
+        <div class="card">
+            <div class="card-header text-center">Uplaod Image</div>
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <th width="50%" class="text-right">
+                            <b>Select Image</b>
+                        </th>
+                        <th width="50%">
+                            <input type="file" class="fro-control" name="sample_image" />
+                        </th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="text-center my-3" id="uploaded_image"></div>
+    </div>
+</body>
+
+</html>
+
+<script>
+    const sample_image = document.getElementsByName('sample_image')[0];
+
+    // Event 
+    sample_image.addEventListener('change', () => {
+        upload_image(sample_image.files[0]);
+    });
+
+    // function 
+    const upload_image = (file) => {
+
+        // validation 
+        if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+            document.getElementById('uploaded_image').innerHTML =
+                `<div class= "alert alert-danger">Only File with Exetension [.jpg .jpeg .png] are allowed ! please Try again </div>`;
+            document.getElementsByName('sample_image')[0].value = '';
+            return;
+        }
+
+        // check size 
+        if (file.size > 2 * 1024 * 1024) {
+            document.getElementById('uploaded_image').innerHTML =
+                `<div class= "alert alert-danger">File must be less than 2 MB ! </div>`;
+            document.getElementsByName('sample_image')[0].value = '';
+            return;
+        }
+
+        const form_data = new FormData();
+        form_data.append('sample_image', file);
+        fetch("uplaod.php", {
+            method: "POST",
+            body: form_data
+        }).then(function(response) {
+            return response.json();
+
+        }).then(function(response_data) {
+            document.getElementById('uploaded_image').innerHTML = '<div class="alert alert-success">Image Upload SuccessFully </div> <img src = "' + response_data.image_source + '" class="img-thumbnail" />';
+        });
+
+
+    }
+</script>
